@@ -1,5 +1,5 @@
 const nodeogram = require("nodeogram");
-const fs = require("fs");
+const fs = require("fs-extra");
 const config = JSON.parse(fs.readFileSync("config.json"));
 const bot = new nodeogram.Bot(config.key);
 bot.init();
@@ -8,7 +8,7 @@ const Scraper = require("./lib/Scraper");
 const scraper = new Scraper({
   username: config.username,
   password: config.password,
-  timeout: 5
+  timeout: 60
 })
 
 function main(){
@@ -43,17 +43,14 @@ function main(){
 
 main();
 
-scraper.on('expired', () => {
+scraper.on('expired', async() => {
 
-  console.log("asdas");
+  await scraper.reset();
   main();
 
 })
 
 scraper.on('first-time', data => {
-
-  // invia la roba per la prima volta
-  console.log("CEEEE");
 
   var message = "Ho trovato nuovi post su <b>" + data.title + "</b>\n\n"
   data.stuff.forEach(post => {
@@ -62,9 +59,7 @@ scraper.on('first-time', data => {
 
   })
 
-  bot.sendMessage("-1001389867213", message, {parse_mode: 'HTML'});
-
-  // -1001389867213
+  bot.sendMessage(config.group_id, message, {parse_mode: 'HTML'});
 
 })
 
@@ -77,6 +72,6 @@ scraper.on('new-posts', data => {
 
   })
 
-  bot.sendMessage("-1001389867213", message, {parse_mode: 'HTML'});
+  bot.sendMessage(config.group_id, message, {parse_mode: 'HTML'});
 
 })

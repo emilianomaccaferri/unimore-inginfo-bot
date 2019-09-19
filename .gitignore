@@ -8,6 +8,10 @@ yarn-error.log*
 # Config
 config.json
 
+# Data
+data/*
+test.js
+
 # Runtime data
 pids
 *.pid

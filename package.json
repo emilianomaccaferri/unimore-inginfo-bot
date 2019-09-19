@@ -1,0 +1,29 @@
+{
+  "name": "dolly-fetcher",
+  "version": "1.0.0",
+  "description": "A Telegram bot that fetches stuff from Dolly",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emilianomaccaferri/dolly-fetcher.git"
+  },
+  "author": "Emiliano Maccaferri",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/emilianomaccaferri/dolly-fetcher/issues"
+  },
+  "homepage": "https://github.com/emilianomaccaferri/dolly-fetcher#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "fs-extra": "^8.1.0",
+    "nodeogram": "0.0.7",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  }
+}
