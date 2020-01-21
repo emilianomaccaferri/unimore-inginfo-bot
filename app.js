@@ -85,8 +85,11 @@ scraper.on('new-posts', data => {
 
 bot.on('message', async(message) => {
 
+  if(message.new_chat_member)
+    bot.sendMessage(config.group_id, `ciaoooo ${message.new_chat_member.first_name}, benvenuto su @unimoreinginfo\nAllora sostanzialmente le regole sono poche, cioè son tipo due, allora:\n1) <b>madonna se dici stonks mamma mia vergognati</b>\n2) <b>rispetta la gente </b>\n\nbene, ora divertiti e buona permanenza da parte di me, il botterino, aka il bot del gruppo.`, {parse_mode: 'HTML'})
+
   if(message.text === undefined)
-    return;
+    message.text = "";
 
   if(message.text.toLowerCase().charAt(0) === '!'){
 
