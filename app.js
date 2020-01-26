@@ -1,10 +1,10 @@
 const nodeogram = require("nodeogram");
 const fs = require("fs-extra");
 const express = require("express");
-const body         = require("body-parser");
+const body    = require("body-parser");
 const app     = express();
-const config = JSON.parse(fs.readFileSync("config.json"));
-const bot = new nodeogram.Bot(config.key);
+const utils   = require("./lib/utils");
+const bot = new nodeogram.Bot(utils.config.key);
 const commands = require("./lib/commands");
 bot.init();
 
@@ -13,8 +13,8 @@ app.use(body.urlencoded({ limit: '500mb', extended: true, parameterLimit: 50000 
 
 const Scraper = require("./lib/Scraper");
 const scraper = new Scraper({
-  username: config.username,
-  password: config.password,
+  username: utils.config.username,
+  password: utils.config.password,
   timeout: 60
 })
 
@@ -66,7 +66,7 @@ scraper.on('first-time', data => {
 
   })
 
-  bot.sendMessage(config.group_id, message, {parse_mode: 'HTML'});
+  bot.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'});
 
 })
 
@@ -79,24 +79,27 @@ scraper.on('new-posts', data => {
 
   })
 
-  bot.sendMessage(config.group_id, message, {parse_mode: 'HTML'});
+  bot.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'});
 
 })
 
 bot.on('message', async(message) => {
 
-  if(message.new_chat_member)
-    bot.sendMessage(config.group_id, `ciaoooo ${message.new_chat_member.first_name}, benvenuto su @unimoreinginfo\nAllora sostanzialmente le regole sono poche, cioè son tipo due, allora:\n1) <b>madonna se dici stonks mamma mia vergognati</b>\n2) <b>rispetta la gente </b>\n\nbene, ora divertiti e buona permanenza da parte di me, il botterino, aka il bot del gruppo.`, {parse_mode: 'HTML'})
+  //if(message.new_chat_member.length > 0)
+    //bot.sendMessage(config.group_id, `ciaoooo ${message.new_chat_member.first_name}, benvenuto su @unimoreinginfo\nAllora sostanzialmente le regole sono poche, cioè son tipo due, allora:\n1) <b>madonna se dici stonks mamma mia vergognati</b>\n2) <b>rispetta la gente </b>\n\nbene, ora divertiti e buona permanenza da parte di me, il botterino, aka il bot del gruppo.`, {parse_mode: 'HTML'})
 
   if(message.text === undefined)
     message.text = "";
 
   if(message.text.toLowerCase().charAt(0) === '!'){
 
-    const args = message.text.split(" ");
+    const args = {bot, message, text: message.text.split(" ")}
     
-    let reply = await commands.execute(message.text.split('!')[1], args);
-    message.reply(reply, {parse_mode: 'HTML'})
+    let reply = await commands.execute(args.text[0].split("!")[1], args);
+    if(reply.markup)
+      message.reply(reply.text, {reply_markup: reply.markup, parse_mode: (reply.parse_mode || 'HTML')})
+    else
+      message.reply(reply.text, {parse_mode: (reply.parse_mode || 'HTML')})
 
   }
 
@@ -121,7 +124,7 @@ Autore: ${author_name}
 
 
       `
-  bot.sendMessage(config.group_id, message, {parse_mode: 'HTML'})
+  bot.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'})
 
   res.json(true);
 
