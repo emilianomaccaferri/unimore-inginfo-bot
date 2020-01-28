@@ -1,11 +1,15 @@
-const nodeogram = require("nodeogram");
-const fs = require("fs-extra");
-const express = require("express");
-const body    = require("body-parser");
-const app     = express();
-const utils   = require("./lib/utils");
-const bot = new nodeogram.Bot(utils.config.key);
-const commands = require("./lib/commands");
+const nodeogram     = require("nodeogram");
+const fs            = require("fs-extra");
+const express       = require("express");
+const body          = require("body-parser");
+const app           = express();
+const utils         = require("./lib/utils");
+const bot           = new nodeogram.Bot(utils.config.key);
+const commands      = require("./lib/commands");
+const GmailNotifier = require("./lib/GmailNotifier");
+const gmail         = new GmailNotifier(fs.readFileSync('./credentials.json'))
+
+
 bot.init();
 
 app.use(body.json({ limit: '500mb' }));
