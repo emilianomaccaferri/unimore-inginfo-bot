@@ -5,8 +5,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Config
+# Config & stuff
 config.json
+token.json
+credentials.json
 
 # Data
 data/*

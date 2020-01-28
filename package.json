@@ -22,9 +22,12 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "express": "^4.17.1",
+    "extend": "^3.0.2",
     "fs-extra": "^8.1.0",
+    "mime": "^2.4.4",
     "nodeogram": "0.0.7",
     "request": "^2.88.0",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "superagent": "^5.2.1"
   }
 }
