@@ -7,9 +7,9 @@ const utils         = require("./lib/utils");
 const bot           = new nodeogram.Bot(utils.config.key);
 const commands      = require("./lib/commands");
 const GmailNotifier = require("./lib/GmailNotifier");
-const gmail         = new GmailNotifier(fs.readFileSync('./credentials.json'))
+const gmail         = new GmailNotifier();
 
-
+gmail.init();
 bot.init();
 
 app.use(body.json({ limit: '500mb' }));
@@ -113,6 +113,19 @@ bot.on('message', async(message) => {
 
 })
 
+gmail.on('new-message', message => {
+
+  const mail = `
+Nuova mail ricevuta\n
+<b>Da: ${message.from.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</b>\n
+<i>Oggetto: ${message.subject}</i>\n\n
+${message.text}
+`  
+
+  bot.sendMessage(utils.config.group_id, mail, {parse_mode: 'HTML'})
+
+})
+
 app.post('/broadcast', (req, res) => {
 
   var author_name = req.body.author_name,
@@ -135,10 +148,3 @@ Autore: ${author_name}
 })
 
 app.listen(1515) // webhook
-
-
-String.prototype.startsWith = function(string){
-
-  return string.toLowerCase() == this.split(" ")[0].toLowerCase();
-
-}
