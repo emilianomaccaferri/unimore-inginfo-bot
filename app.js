@@ -1,16 +1,15 @@
-const nodeogram     = require("nodeogram");
+const Telegraf      = require("telegraf");
 const fs            = require("fs-extra");
 const express       = require("express");
 const body          = require("body-parser");
 const app           = express();
 const utils         = require("./lib/utils");
-const bot           = new nodeogram.Bot(utils.config.key);
+const bot           = new Telegraf(utils.config.key);
 const commands      = require("./lib/commands");
 const GmailNotifier = require("./lib/GmailNotifier");
 const gmail         = new GmailNotifier();
 
 gmail.init();
-bot.init();
 
 app.use(body.json({ limit: '500mb' }));
 app.use(body.urlencoded({ limit: '500mb', extended: true, parameterLimit: 50000 }));
@@ -70,7 +69,7 @@ scraper.on('first-time', data => {
 
   })
 
-  bot.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'});
+  bot.telegram.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'});
 
 })
 
@@ -83,12 +82,13 @@ scraper.on('new-posts', data => {
 
   })
 
-  bot.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'});
+  bot.telegram.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'});
 
 })
 
-bot.on('message', async(message) => {
+bot.on('text', async(ctx) => {
 
+  let message = ctx.message;
   //if(message.new_chat_member.length > 0)
     //bot.sendMessage(config.group_id, `ciaoooo ${message.new_chat_member.first_name}, benvenuto su @unimoreinginfo\nAllora sostanzialmente le regole sono poche, cioè son tipo due, allora:\n1) <b>madonna se dici stonks mamma mia vergognati</b>\n2) <b>rispetta la gente </b>\n\nbene, ora divertiti e buona permanenza da parte di me, il botterino, aka il bot del gruppo.`, {parse_mode: 'HTML'})
 
@@ -101,15 +101,15 @@ bot.on('message', async(message) => {
     
     let reply = await commands.execute(args.text[0].split("!")[1], args);
     if(reply.markup)
-      message.reply(reply.text, {reply_markup: reply.markup, parse_mode: (reply.parse_mode || 'HTML')})
+      ctx.reply(reply.text, {reply_markup: reply.markup, parse_mode: (reply.parse_mode || 'HTML')})
     else
-      message.reply(reply.text, {parse_mode: (reply.parse_mode || 'HTML')})
+      ctx.reply(reply.text, {parse_mode: (reply.parse_mode || 'HTML')})
 
   }
 
 
   if(message.text.toLowerCase().includes("stonks"))
-    message.reply("se dici stonks ti dovresti vergognare del tuo patrimonio genetico")
+    ctx.reply("se dici stonks ti dovresti vergognare del tuo patrimonio genetico")
 
 })
 
@@ -120,9 +120,14 @@ Nuova mail ricevuta\n
 <b>Da: ${message.from.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</b>\n
 <i>Oggetto: ${message.subject}</i>\n\n
 ${message.text}
-`  
+`
+  
+  bot.telegram.sendMessage(utils.config.group_id, mail, {parse_mode: 'HTML'})
+    .then(message => {
 
-  bot.sendMessage(utils.config.group_id, mail, {parse_mode: 'HTML'})
+      bot.telegram.pinChatMessage(message.chat.id, message.message_id)
+
+    })
 
 })
 
@@ -141,10 +146,11 @@ Autore: ${author_name}
 
 
       `
-  bot.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'})
+  bot.telegram.sendMessage(utils.config.group_id, message, {parse_mode: 'HTML'})
 
   res.json(true);
 
 })
 
 app.listen(1515) // webhook
+bot.launch();

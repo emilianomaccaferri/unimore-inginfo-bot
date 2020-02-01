@@ -26,9 +26,9 @@
     "fs-extra": "^8.1.0",
     "googleapis": "^39.2.0",
     "mime": "^2.4.4",
-    "nodeogram": "0.0.7",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "superagent": "^5.2.1"
+    "superagent": "^5.2.1",
+    "telegraf": "^3.36.0"
   }
 }
